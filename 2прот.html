@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MIL-TECH: Энциклопедия военной техники и авиации</title>
+    <style>
+      :root {
+          --bg-color: #f4f6f8;
+          --card-bg: #ffffff;
+          --primary: #1e293b;
+          --accent: #10b981;
+          --danger: #ef4444;
+          --warning: #f59e0b;
+          --text-main: #1e293b;
+          --text-muted: #64748b;
+          --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+          --radius: 16px;
+          --placeholder-bg: #e2e8f0;
+      }
+
+      * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+
+      body {
+          background-color: var(--bg-color);
+          color: var(--text-main);
+          line-height: 1.6;
+      }
+
+      header {
+          background: var(--primary);
+          color: white;
+          padding: 1.2rem 5%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          position: sticky;
+          top: 0;
+          z-index: 1000;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo {
+          font-size: 1.5rem;
+          font-weight: 800;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          cursor: pointer;
+          letter-spacing: -0.025em;
+      }
+
+      nav ul {
+          display: flex;
+          list-style: none;
+          gap: 30px;
+      }
+
+      nav a {
+          color: #94a3b8;
+          text-decoration: none;
+          font-weight: 600;
+          transition: all 0.2s;
+          cursor: pointer;
+          padding: 8px 12px;
+          border-radius: 8px;
+          position: relative;
+      }
+
+      nav a:hover, nav a.active-nav {
+          color: white;
+          background: rgba(255, 255, 255, 0.1);
+      }
+
+      .container {
+          max-width: 1400px;
+          margin: 2rem auto;
+          padding: 0 20px;
+      }
+
+      .page {
+          display: none;
+      }
+
+      .page.active {
+          display: block;
+          animation: fadeIn 0.5s ease-out;
+      }
+
+      @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+      }
+
+      .hero {
+          text-align: center;
+          padding: 4rem 1rem;
+      }
+
+      .filter-tabs {
+          display: flex;
+          gap: 12px;
+          margin-bottom: 2.5rem;
+          justify-content: center;
+          flex-wrap: wrap;
+      }
+
+      .tab-btn {
+          padding: 12px 28px;
+          border: none;
+          border-radius: 50px;
+          background: #e2e8f0;
+          color: var(--text-muted);
+          cursor: pointer;
+          font-weight: 700;
+          transition: all 0.3s ease;
+      }
+
+      .tab-btn.active {
+          background: var(--primary);
+          color: white;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+
+      .grid {
+          display: flex;
+          justify-content: center;
+          gap: 32px;
+          flex-wrap: wrap;
+          align-items: stretch
+      }
+
+      .card {
+          background: var(--card-bg);
+          border-radius: var(--radius);
+          overflow: hidden;
+          box-shadow: var(--shadow);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          display: flex;
+          flex-direction: column;
+          border: 1px solid rgba(0,0,0,0.05);
+          width: 360px;
+          min-height: 520px;
+      }
+
+      .card:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Рамка вместо картинки */
+      .card-image {
+          width: 100%;
+          height: 220px;
+          object-fit: cover;
+          display: block;
+      }
+
+      .detail-image {
+          width: 100%;
+          max-width: 600px;
+          height: 400px;
+          object-fit: cover;
+          border-radius: 20px;
+          box-shadow: var(--shadow);
+      }
+
+      .comp-image {
+          width: 100%;
+          max-width: 180px;
+          height: 100px;
+          object-fit: cover;
+          border-radius: 10px;
+          margin-bottom: 12px;
+      }
+
+      .card-content {
+          padding: 1.5rem;
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+      }
+
+      .btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 10px 20px;
+          background: var(--primary);
+          color: white;
+          text-decoration: none;
+          border-radius: 10px;
+          font-size: 0.95rem;
+          font-weight: 600;
+          border: none;
+          cursor: pointer;
+          transition: 0.2s;
+      }
+
+      .btn:active { transform: scale(0.98); }
+
+      .btn.btn-outline {
+          background: transparent;
+          border: 2px solid var(--primary);
+          color: var(--primary);
+          margin-bottom: 12px;
+      }
+
+      .btn.btn-remove {
+          background: var(--danger);
+      }
+
+      .comparison-wrapper {
+          background: white;
+          padding: 2rem;
+          border-radius: var(--radius);
+          box-shadow: var(--shadow);
+          margin-top: 20px;
+      }
+
+      .table-responsive {
+          overflow-x: auto;
+          margin-top: 1.5rem;
+      }
+
+      table {
+          width: 100%;
+          border-collapse: separate;
+          border-spacing: 0;
+          min-width: 900px;
+      }
+
+      th, td {
+          padding: 16px;
+          text-align: left;
+          border-bottom: 1px solid #f1f5f9;
+      }
+
+      th {
+          background: #f8fafc;
+          font-weight: 700;
+          color: #475569;
+          position: sticky;
+          top: 0;
+          z-index: 10;
+      }
+
+      .comp-header-placeholder {
+          width: 100%;
+          max-width: 180px;
+          height: 100px;
+          background: var(--placeholder-bg);
+          border: 1px dashed #cbd5e1;
+          border-radius: 10px;
+          margin-bottom: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.6rem;
+          color: #94a3b8;
+      }
+
+      .stat-bar-bg {
+          background: #f1f5f9;
+          height: 10px;
+          border-radius: 10px;
+          width: 100%;
+          margin-top: 6px;
+      }
+
+      .stat-bar-fill {
+          height: 100%;
+          border-radius: 10px;
+          transition: width 0.5s ease-in-out;
+      }
+
+      .tag {
+          background: #f1f5f9;
+          color: #475569;
+          padding: 4px 10px;
+          border-radius: 6px;
+          font-size: 0.7rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          margin-bottom: 10px;
+          display: inline-block;
+          width: fit-content;
+      }
+
+      .info-box {
+          background: #f8fafc;
+          padding: 2rem;
+          border-radius: 12px;
+          margin-bottom: 1.5rem;
+          border: 1px solid #e2e8f0;
+      }
+
+      .shell-list {
+          font-size: 0.85rem;
+          list-style: none;
+          padding: 0;
+      }
+
+      .shell-list li {
+          padding-left: 14px;
+          position: relative;
+          margin-bottom: 6px;
+          color: #475569;
+      }
+
+      .shell-list li::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 8px;
+          width: 5px;
+          height: 5px;
+          background: var(--accent);
+          border-radius: 50%;
+      }
+
+      .footer {
+          margin-top: 6rem;
+          padding: 3rem;
+          text-align: center;
+          background: var(--primary);
+          color: #94a3b8;
+      }
+
+      #compare-count-badge {
+          background: var(--danger);
+          color: white;
+          font-size: 0.7rem;
+          padding: 2px 8px;
+          border-radius: 12px;
+          margin-left: 8px;
+          vertical-align: middle;
+          display: none;
+          font-weight: 800;
+          animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+          0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+          70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+          100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+      }
+
+      .comp-tabs {
+          display: flex;
+          border-bottom: 2px solid #e2e8f0;
+          margin-bottom: 20px;
+      }
+
+      .comp-tab {
+          padding: 12px 24px;
+          cursor: pointer;
+          font-weight: 700;
+          color: #64748b;
+          border-bottom: 2px solid transparent;
+          margin-bottom: -2px;
+      }
+
+      .comp-tab.active {
+          color: var(--primary);
+          border-bottom: 2px solid var(--primary);
+      }
+
+      .detail-img-placeholder {
+          width: 100%;
+          max-width: 600px;
+          height: 400px;
+          border-radius: 20px;
+          background: var(--placeholder-bg);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #94a3b8;
+          font-weight: 700;
+          border: 2px dashed #cbd5e1;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo" onclick="showPage('home')">
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="white"
+          stroke-width="2.5"
+        >
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+        </svg>
+        MIL-TECH
+      </div>
+      <nav>
+        <ul>
+          <li><a onclick="showPage('home')" id="nav-home">Главная</a></li>
+          <li><a onclick="showPage('catalog')" id="nav-catalog">Каталог</a></li>
+          <li>
+            <a onclick="showPage('compare')" id="nav-compare"
+              >Сравнение <span id="compare-count-badge">0</span></a
+            >
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <div class="container">
+      <section id="home" class="page active">
+        <div class="hero">
+          <h1
+            style="font-size: 3.5rem; letter-spacing: -0.05em; margin-bottom: 1rem;"
+          >
+            Военная энциклопедия
+          </h1>
+          <p
+            style="font-size: 1.25rem; color: var(--text-muted); max-width: 700px; margin: 0 auto 3rem;"
+          >
+            Сравнение ТТХ современных систем вооружения 4-го
+            поколения.
+          </p>
+        </div>
+        <div class="grid">
+          <div
+            class="card"
+            onclick="filterCatalog('land'); showPage('catalog')"
+            style="cursor:pointer"
+          >
+            <img src="image/ground.jpg" class="card-image">
+            <div class="card-content">
+              <span class="tag">Ground Forces</span>
+              <h2>Бронетехника</h2>
+              <p>
+                ОБТ, современные БМП и машины поддержки.Сравнение бронирования и
+                огневой мощи.
+              </p>
+            </div>
+          </div>
+          <div
+            class="card"
+            onclick="filterCatalog('air'); showPage('catalog')"
+            style="cursor:pointer"
+          >
+            <img src="image/Air.webp" class="card-image">
+            <div class="card-content">
+              <span class="tag">Aviation</span>
+              <h2>Авиация</h2>
+              <p>
+                Истребители 4-го поколения, многоцелевые платформы.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="catalog" class="page">
+        <div class="filter-tabs">
+          <button
+            class="tab-btn active"
+            id="tab-all"
+            onclick="filterCatalog('all')"
+          >
+            Все системы
+          </button>
+          <button class="tab-btn" id="tab-land" onclick="filterCatalog('land')">
+            Бронетехника
+          </button>
+          <button class="tab-btn" id="tab-air" onclick="filterCatalog('air')">
+            Авиация
+          </button>
+        </div>
+        <div class="grid" id="catalog-grid"></div>
+      </section>
+
+      <section id="compare" class="page">
+        <div
+          style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;"
+        >
+          <h2>Сравнительный анализ</h2>
+          <button
+            class="btn"
+            style="background:var(--danger)"
+            onclick="clearComparison()"
+          >
+            Очистить всё
+          </button>
+        </div>
+
+        <div class="comp-tabs">
+          <div
+            class="comp-tab active"
+            id="comp-tab-land"
+            onclick="setCompareTab('land')"
+          >
+            Наземная техника
+          </div>
+          <div
+            class="comp-tab"
+            id="comp-tab-air"
+            onclick="setCompareTab('air')"
+          >
+            Авиация
+          </div>
+        </div>
+
+        <div class="comparison-wrapper">
+          <div class="table-responsive" id="comparison-view"></div>
+        </div>
+      </section>
+
+      <section id="detail" class="page">
+        <button onclick="showPage('catalog')" class="btn btn-outline">
+          ← Назад в каталог
+        </button>
+        <div id="detail-content"></div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <p>
+        &copy; 2026 MIL-TECH Encyclopedia Edition.
+      </p>
+    </footer>
+
+    <script>
+      const data = [
+          // TANKS & BMP
+          { id: 1, cat: 'land', name: "Т-90М 'Прорыв'", image:"image/t90m.jpg", country: "Россия", tag: "Танк",
+            history: "Разработан ООО 'УКБТМ' в начале 2010-х годов как экспортная и одновременно глубоко модернизированная версия Т-90. Включает новую башню, систему управления огнем 'Калина' и улучшенную защиту.",
+            serviceInfo: "На вооружении РФ (около 150+ ед. модификации М/МС), Индии (контракт на 460+ ед.).",
+            protectionLabel: "ДЗ 'Реликт'", protectionWeight: 3.5,
+            shells: ["3БМ60 'Свинец-2'", "3БК31 'Старт'", "9М119М1 'Инвар-М'"], stats: { main: "125мм 2А46М-5", mass: 48, power: 1130, speed: 60, crew: "3" } },
+          { id: 2, cat: 'land', name: "M1A2 SEPv3 Abrams", image:"image/M1A2.jpg", country: "США", tag: "Танк",
+            history: "Версия SEPv3 (System Enhancement Package) начала поступать в войска в 2017 году. Фокус на живучести, электронике и установке новых пакетов бронирования.",
+            serviceInfo: "Армия США (заказано более 1500 обновлений), Польша (250 ед.), Тайвань (108 ед.).",
+            protectionLabel: "Пакет TUSK II", protectionWeight: 5.2,
+            shells: ["M829A4 (APFSDS)", "M830A1 (HEAT)"], stats: { main: "120мм M256", mass: 66, power: 1500, speed: 67, crew: "4" } },
+          { id: 3,cat: 'land',
+            name: "Leopard 2A7",country: "Германия",image:"image/Leopard2.webp",tag: "Танк",
+            desc: "Модификация с усиленным бронированием корпуса и башни против СВУ и кумулятивных зарядов.",
+            history: "Производство началось в 1979 году. Версия 2A7 оптимизирована как для танковых сражений, так и для асимметричных конфликтов.",
+            serviceInfo: "На вооружении Бундесвера около 320 танков Leopard 2 различных модификаций.",
+            color: "#34495e",
+            protectionLabel: "AMAP + модульная броня", protectionWeight: 3.8,
+            shells: ["DM63/73 (APFSDS)", "DM11 (HE-P-T)", "DM12A2 (HEAT)"],
+            stats: { main: "120мм Rh-120 L55", mass: 67, power: 1500, speed: 72, crew: "4" }},
+          { id: 4,cat: 'land',name: "Challenger 2",image:"image/Challenger2.jpg",country: "Великобритания",tag: "Танк",
+            desc: "Оснащается массивными модулями Dorchester и решетчатыми экранами (пакет TES).",
+            history: "Создан в 1990-х. Уникален использованием нарезной 120-мм пушки. Имеет репутацию одного из самых защищенных танков.",
+            serviceInfo: "Числится 227 единиц. Проводится модернизация 148 танков до стандарта Challenger 3.",
+            color: "#7f8c8d",
+            protectionLabel: "Dorchester TES", protectionWeight: 7.5,
+            shells: ["L27A1 (APFSDS)", "L31A7 (HESH)", "L34 (Дымовой)"],
+            stats: { main: "120мм L30A1", mass: 62.5, power: 1200, speed: 59, crew: "4" }},
+          { id: 5, cat: 'land', name: "M2A4 Bradley",image:"image/Bradley.jpg", country: "США", tag: "БМП",
+            history: "Модификация A4 разработана для восстановления мощности двигателя и подвески после многократных модернизаций. Включает оцифрованную систему управления боем.",
+            serviceInfo: "На вооружении США (план до 700+ ед. модификации), Саудовской Аравии.",
+            protectionLabel: "ДЗ BUSK III", protectionWeight: 2.8,
+            shells: ["25мм M919", "TOW-2B"], stats: { main: "25мм M242", mass: 30, power: 675, speed: 61, crew: "3+7" } },
+          { id: 6, cat: 'land', name: "БМПТ 'Терминатор'",image:"image/Terminator.jpg", country: "Россия", tag: "БМПТ",
+            history: "Разработан на базе Т-72 или Т-90 для поддержки танков в условиях плотной застройки. Концепция родилась после опыта войны в Чечне.",
+            serviceInfo: "ВС РФ (около 18-20 ед.), Казахстан (10 ед.), Алжир (около 300 ед.).",
+            protectionLabel: "ДЗ 'Реликт'", protectionWeight: 4.0,
+            shells: ["2x 30мм 2А42", "ПТУР 'Атака'"], stats: { main: "2x 30мм", mass: 48, power: 1000, speed: 60, crew: "5" } },
+          { id: 7, cat: 'land', name: "Puma IFV",image:"image/Ger.webp", country: "Германия", tag: "БМП",
+            history: "Совместная разработка KMW и Rheinmetall. Новая эра защищенности для БМП с дистанционно управляемой башней и модульной броней.",
+            serviceInfo: "Бундесвер (350 ед. в эксплуатации).",
+            protectionLabel: "Уровень C", protectionWeight: 11.5,
+            shells: ["30мм PMC 287", "Spike-LR"], stats: { main: "30мм MK 30-2", mass: 31.5, power: 1088, speed: 70, crew: "3+6" } },
+
+          // AIRCRAFT
+          { id: 8, cat: 'air', name: "Eurofighter Typhoon", image:"image/eft.webp",country: "ЕС (UK/GER/ITA/ESP)", tag: "Многоцелевой 4++",
+            history: "Результат европейской кооперации. Основной боевой истребитель стран НАТО в Европе, оптимизированный для завоевания превосходства в воздухе.",
+            serviceInfo: "ВВС Британии (130+), Германии (140+), Саудовской Аравии (72), Катара (24).",
+            protectionLabel: "Блок DASS", protectionWeight: 1.5,
+            shells: ["Meteor (BVRAAM)", "IRIS-T", "Storm Shadow"], stats: { main: "27мм BK-27", mass: 11.0, power: 18000, speed: 2495, crew: "1" } },
+          { id: 9, cat: 'air', name: "Dassault Rafale", image:"image/rafale.jpg",country: "Франция", tag: "Многоцелевой 4++",
+            history: "Разработан Францией самостоятельно после выхода из проекта Eurofighter. Воплощает концепцию 'всезадачности' (omnirole).",
+            serviceInfo: "ВВС Франции (150+), Индии (36), Египта (54), Катара (36).",
+            protectionLabel: "Контейнер Talios", protectionWeight: 0.8,
+            shells: ["MICA", "SCALP EG", "AM39 Exocet"], stats: { main: "30мм GIAT 30", mass: 10.3, power: 15300, speed: 1912, crew: "1-2" } },
+          { id: 10, cat: 'air', name: "HAL Tejas",image:"image/tejas.webp", country: "Индия", tag: "Легкий истребитель 4+пок",
+            history: "Программа LCA (Light Combat Aircraft) стартовала в Индии еще в 1980-х. Первый национальный сверхзвуковой истребитель Индии.",
+            serviceInfo: "ВВС Индии (заказано более 120 ед. модификаций Mk1/Mk1A).",
+            protectionLabel: "Блок ELT-568 ESP", protectionWeight: 0.5,
+            shells: ["Astra MK-I", "Python-5", "I-Derby"], stats: { main: "23мм ГШ-23Л", mass: 6.5, power: 9000, speed: 2200, crew: "1" } },
+          { id: 11, cat: 'air', name: "Shenyang J-16", image:"image/j16.png", country: "Китай", tag: "Ударный истребитель 4.5пок",
+            history: "Китайская разработка на базе Су-30МКК. Оснащена АФАР-радаром и китайскими двигателями WS-10.",
+            serviceInfo: "ВВС НОАК (эксплуатируется более 200 ед. в различных полках).",
+            protectionLabel: "ECM Pod KG-600", protectionWeight: 0.9,
+            shells: ["PL-10", "PL-15", "YJ-91"], stats: { main: "30мм Тип 30-1", mass: 17.7, power: 28000, speed: 2400, crew: "2" } },
+          { id: 12, cat: 'air', name: "Су-35", image:"image/su351.jpg", country: "Россия", tag: "Многофункциональный 4++",
+            history: "Самый совершенный представитель семейства Су-27. Обладает двигателями с управляемым вектором тяги и мощнейшим радаром 'Ирбис'.",
+            serviceInfo: "ВКС РФ (около 110-120 ед.), ВВС Китая (24 ед.).",
+            protectionLabel: "Хибины-М", protectionWeight: 1.2,
+            shells: ["Р-77-1", "Р-37М", "КАБ-500"], stats: { main: "30мм ГШ-30-1", mass: 18.5, power: 29000, speed: 2400, crew: "1" } }
+      ];
+
+      let currentCategory = 'all';
+      let compareTab = 'land';
+      let comparisonList = [1, 2, 3, 4];
+      let protectionStates = {};
+
+      function showPage(pageId) {
+          document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+          document.querySelectorAll('nav a').forEach(a => a.classList.remove('active-nav'));
+          document.getElementById(pageId).classList.add('active');
+          const nav = document.getElementById('nav-' + pageId);
+          if(nav) nav.classList.add('active-nav');
+          window.scrollTo(0, 0);
+      }
+
+      function filterCatalog(cat) {
+          currentCategory = cat;
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          document.getElementById('tab-' + cat).classList.add('active');
+          renderCatalog();
+      }
+
+      function setCompareTab(tab) {
+          compareTab = tab;
+          document.querySelectorAll('.comp-tab').forEach(t => t.classList.remove('active'));
+          document.getElementById('comp-tab-' + tab).classList.add('active');
+          renderComparison();
+      }
+
+      function toggleCompare(id) {
+          const idx = comparisonList.indexOf(id);
+          if (idx === -1) comparisonList.push(id);
+          else comparisonList.splice(idx, 1);
+          renderCatalog();
+          renderComparison();
+          updateBadge();
+      }
+
+      function toggleProtection(id) {
+          protectionStates[id] = !protectionStates[id];
+          renderComparison();
+      }
+
+      function clearComparison() {
+          comparisonList = [];
+          renderCatalog();
+          renderComparison();
+          updateBadge();
+      }
+
+      function updateBadge() {
+          const b = document.getElementById('compare-count-badge');
+          const count = comparisonList.length;
+          if (count > 0) {
+              b.textContent = count;
+              b.style.display = 'inline-block';
+          } else {
+              b.style.display = 'none';
+          }
+      }
+
+      function renderCatalog() {
+          const grid = document.getElementById('catalog-grid');
+          const filtered = data.filter(i => currentCategory === 'all' || i.cat === currentCategory);
+          grid.innerHTML = filtered.map(item => {
+              const isComp = comparisonList.includes(item.id);
+              return `
+                <div class="card">
+                    <img src="${item.image}" alt="${item.name}" class="card-image">
+                    <div class="card-content">
+                        <div style="display:flex; justify-content:space-between; align-items:start">
+                           <span class="tag">${item.tag}</span>
+                           <span style="font-size:0.7rem; color:var(--text-muted); font-weight:700">${item.country}</span>
+                        </div>
+                        <h3 style="margin-bottom:12px; font-size:1.3rem; height: 3.2rem; overflow:hidden">${item.name}</h3>
+                        <div style="margin-top:auto">
+                            <button onclick="showDetails(${item.id})" class="btn btn-outline" style="width:100%">Инфо</button>
+                            <button onclick="toggleCompare(${item.id})" class="btn ${isComp ? 'btn-remove' : ''}" style="width:100%">
+                                ${isComp ? 'Удалить' : 'Сравнить'}
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+          }).join('');
+      }
+
+      function showDetails(id) {
+          const item = data.find(d => d.id === id);
+          const content = document.getElementById('detail-content');
+          content.innerHTML = `
+            <div style="display:flex; gap:40px; margin: 3rem 0; flex-wrap:wrap">
+                <img src="${item.image}" alt="${item.name}" class="detail-image">
+                <div style="flex:1; min-width:300px">
+                    <h1 style="font-size:2.5rem; margin-bottom:10px; border-bottom: 2px solid var(--primary); display:inline-block">${item.name}</h1>
+                    <p style="font-size:1.2rem; color:var(--text-muted); margin-bottom:2rem">${item.country} — ${item.tag}</p>
+                    <div class="info-box">
+                        <h3 style="margin-bottom:10px; color:var(--primary)">История создания</h3>
+                        <p style="line-height:1.8">${item.history}</p>
+                    </div>
+                    <div class="info-box">
+                        <h3 style="margin-bottom:10px; color:var(--primary)">Статус и Вооружение</h3>
+                        <p style="margin-bottom: 15px; font-weight: 700">${item.serviceInfo}</p>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px">Доступный арсенал:</p>
+                        <ul class="shell-list">
+                           ${item.shells.map(s => `<li>${s}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+          `;
+          showPage('detail');
+      }
+
+      function getMassColor(mass, cat) {
+          const limit = cat === 'air' ? 45 : 75;
+          const ratio = mass / limit;
+          if (ratio < 0.35) return "#10b981";
+          if (ratio < 0.65) return "#f59e0b";
+          return "#ef4444";
+      }
+
+      function renderComparison() {
+          const view = document.getElementById('comparison-view');
+          const filteredItems = data.filter(i => comparisonList.includes(i.id) && i.cat === compareTab);
+
+          if (!filteredItems.length) {
+              view.innerHTML = `<div style="text-align:center; padding:5rem; color:var(--text-muted)">
+                <p style="font-size: 1.2rem; margin-bottom: 10px">В этой категории пока нет техники для сравнения.</p>
+                <button class="btn" onclick="showPage('catalog')">Перейти в каталог</button>
+                </div>`;
+              return;
+          }
+
+          let html = `<table><thead><tr><th>Характеристика</th>` + filteredItems.map(i => `
+            <th style="min-width: 250px">
+               <img src="${i.image}" alt="${i.name}" class="comp-image">
+               <div style="display:flex; justify-content:space-between; align-items:center; gap: 8px">
+                  <span style="font-size:1.1rem">${i.name}</span>
+                  <button onclick="toggleCompare(${i.id})" style="background:var(--danger); border:none; color:white; border-radius:50%; width:24px; height:24px; cursor:pointer; flex-shrink:0">✕</button>
+               </div>
+            </th>`).join('') + `</tr></thead><tbody>`;
+
+          const rows = [
+              { l: "Статистика / Страны", type: "service" },
+              { l: "Экипаж", k: "crew" },
+              { l: "Вооружение", k: "main" },
+              { l: "Масса (т)", type: "mass" },
+              { l: "Доп. оборудование", type: "prot" },
+              { l: "Арсенал / Типы БК", type: "shells" },
+              { l: compareTab === 'air' ? "Тяга/Мощность" : "Мощность (л.с.)", k: "power" },
+              { l: "Скорость макс.", k: "speed", unit: "км/ч" }
+          ];
+
+          rows.forEach(r => {
+              html += `<tr><td style="background:#f8fafc; font-weight:700; color:var(--primary); width:200px">${r.l}</td>`;
+              filteredItems.forEach(i => {
+                  if (r.k) {
+                      html += `<td>${i.stats[r.k]} ${r.unit || ''}</td>`;
+                  } else if (r.type === 'history') {
+                      html += `<td><div style="font-size:0.8rem; line-height:1.4">${i.history.substring(0, 100)}...</div></td>`;
+                  } else if (r.type === 'service') {
+                      html += `<td><div style="font-size:0.8rem; font-weight:600">${i.serviceInfo}</div></td>`;
+                  } else if (r.type === 'mass') {
+                      const baseMass = i.stats.mass;
+                      const extra = protectionStates[i.id] ? i.protectionWeight : 0;
+                      const total = baseMass + extra;
+                      const color = getMassColor(total, i.cat);
+                      const maxRef = i.cat === 'air' ? 50 : 85;
+                      const percent = Math.min((total / maxRef) * 100, 100).toFixed(0);
+                      html += `<td>
+                          <span style="font-weight:700; color:${color}; font-size: 1.1rem">${total.toFixed(1)} т</span>
+                          <div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${percent}%; background:${color}"></div></div>
+                      </td>`;
+                  } else if (r.type === 'prot') {
+                      const active = !!protectionStates[i.id];
+                      html += `<td>
+                          <div style="font-size: 0.8rem; margin-bottom: 5px; color: var(--text-muted); font-weight: 600">${i.protectionLabel}</div>
+                          <button class="btn" style="font-size:10px; width: 100%; padding:6px; background:${active ? 'var(--accent)' : '#94a3b8'}"
+                            onclick="toggleProtection(${i.id})"> ${active ? 'УСТАНОВЛЕНО' : 'УСТАНОВИТЬ'}</button>
+                      </td>`;
+                  } else if (r.type === 'shells') {
+                      html += `<td><ul class="shell-list">${i.shells.map(s => `<li>${s}</li>`).join('')}</ul></td>`;
+                  }
+              });
+              html += `</tr>`;
+          });
+
+          html += `</tbody></table>`;
+          view.innerHTML = html;
+      }
+
+      // Init
+      renderCatalog();
+      renderComparison();
+      updateBadge();
+    </script>
+  </body>
+</html>
